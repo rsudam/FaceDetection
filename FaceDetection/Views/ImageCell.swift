@@ -17,6 +17,12 @@ class ImageCell: UICollectionViewCell {
         return iv
     }()
     
+    
+    let activityIndicator: UIActivityIndicatorView = {
+        let av = UIActivityIndicatorView(style: .whiteLarge)
+        return av
+    }()
+    
     var imageName: String? {
         didSet{
             if let imageName = imageName {
@@ -36,7 +42,12 @@ class ImageCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(imageView)
-        imageView.frame = CGRect(x: 0, y: 0, width: frame.width, height: scaledHeight)
+        backgroundColor = .black
+        
+        addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
     
     

@@ -61,23 +61,27 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         removeRedViews()
         let cell = collectionView.cellForItem(at: indexPath) as! ImageCell
-        
+        cell.activityIndicator.startAnimating()
+        detectFacesInImages(cell: cell, scaledHeight: cell.scaledHeight)
+    }
+    
+    fileprivate func detectFacesInImages(cell: ImageCell, scaledHeight: CGFloat) {
         let request = VNDetectFaceRectanglesRequest.init { (req, err) in
             if let err = err {
                 print("Failed to detect faces:", err)
                 return
             }
-
+            
             req.results?.forEach({ (res) in
-
+                
                 DispatchQueue.main.async {
                     guard let faceObservation = res as? VNFaceObservation  else { return }
-
+                    
                     let width = self.view.frame.width * faceObservation.boundingBox.width
-                    let height = cell.scaledHeight * faceObservation.boundingBox.height
-                    let y = cell.scaledHeight * (1 - faceObservation.boundingBox.origin.y) - (height)
+                    let height = scaledHeight * faceObservation.boundingBox.height
+                    let y = scaledHeight * (1 - faceObservation.boundingBox.origin.y) - (height)
                     let x = self.view.frame.width * faceObservation.boundingBox.origin.x
-
+                    
                     let redView = UIView()
                     redView.backgroundColor = .red
                     redView.alpha = 0.4
@@ -86,13 +90,15 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
                     self.redViews.forEach({ (view) in
                         self.view.addSubview(view)
                     })
+                    
+                    cell.activityIndicator.stopAnimating()
                 }
-
+                
             })
         }
-
+        
         guard let cgImage = cell.imageView.image!.cgImage else { return }
-
+        
         DispatchQueue.global(qos: .background).async {
             let handler = VNImageRequestHandler.init(cgImage: cgImage, options: [:])
             do {
