@@ -42,7 +42,7 @@ class ViewController: UIViewController {
                     
                     let redView = UIView()
                     redView.backgroundColor = .red
-                    redView.alpha = 0.5
+                    redView.alpha = 0.4
                     redView.frame = CGRect(x: x, y: y, width: width, height: height)
                     self.view.addSubview(redView)
                 }
